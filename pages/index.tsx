@@ -25,7 +25,12 @@ function getCurrency(
 ) {
   switch (action.type) {
     case CurrencyConversionActionTypes.INPUT_CONVERSION_VALUES: {
-      return { ...state, [action.payload.name]: action.payload.value };
+      if (action.payload)
+        return { ...state, [action.payload.name]: action.payload.value };
+    }
+    case CurrencyConversionActionTypes.INVERT_INPUTS: {
+      let temp = state.to;
+      return { ...state, to: state.from, from: temp };
     }
 
     default:

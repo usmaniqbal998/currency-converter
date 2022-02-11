@@ -36,10 +36,7 @@ const ConversionWidget: React.FunctionComponent<Props> = ({
 
   return (
     <Box>
-      <Typography
-        sx={{ mt: 1.5, fontWeight: "500", color: "#333" }}
-        variant="h4"
-      >
+      <Typography sx={{ mt: 1.5, fontWeight: "500" }} variant="h4">
         I want to Convert
       </Typography>
       <Box
@@ -100,6 +97,9 @@ const ConversionWidget: React.FunctionComponent<Props> = ({
           component="span"
           sx={{ display: { xs: "none", sm: "inline-block" } }}
           disableRipple
+          onClick={() => {
+            dispatch({ type: CurrencyConversionActionTypes.INVERT_INPUTS });
+          }}
         >
           <CompareArrowsIcon color="primary" />
         </IconButton>

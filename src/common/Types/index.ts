@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export interface Pages {
   title: string;
   address: string;
@@ -16,13 +17,13 @@ export interface CurrencyConversionInput {
 }
 
 export enum CurrencyConversionActionTypes {
-  // eslint-disable-next-line no-unused-vars
   INPUT_CONVERSION_VALUES,
+  INVERT_INPUTS,
 }
 
 export interface CurrencyConverionActions {
   type: CurrencyConversionActionTypes;
-  payload: { name: string; value: string };
+  payload?: { name: string; value: string };
 }
 
 export interface currencyData {
