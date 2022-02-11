@@ -24,3 +24,11 @@ export interface CurrencyConverionActions {
   type: CurrencyConversionActionTypes;
   payload: { name: string; value: string };
 }
+
+export interface currencyData {
+  to: string;
+  from: string;
+  amount: number;
+  price: number;
+  isFound: boolean;
+}
