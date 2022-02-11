@@ -9,19 +9,41 @@ import {
 import type { NextPage } from "next";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import Fetch from "../src/utils/axios";
-import { ExchangeCurrency } from "../src/common/Types";
+import {
+  CurrencyConversionInput,
+  ExchangeCurrency,
+  CurrencyConverionActions,
+  CurrencyConversionActionTypes,
+} from "../src/common/Types";
 import { useReducer } from "react";
 
 interface Props {
-  availableCurrencies: ExchangeCurrency[];
+  availableCurrencies: string[];
+}
+const initialState: CurrencyConversionInput = {
+  amount: "0",
+  to: "USD",
+  from: "EUR",
+};
+function getCurrency(
+  state: CurrencyConversionInput,
+  action: CurrencyConverionActions
+) {
+  switch (action.type) {
+    case CurrencyConversionActionTypes.INPUT_CONVERSION_VALUES: {
+      return { ...state, [action.payload.name]: action.payload.value };
+    }
+
+    default:
+      throw new Error("No such action available for currency conversion");
+  }
 }
 
 const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
-  // const [state,dispatch] = useReducer()
+  const [state, dispatch] = useReducer(getCurrency, initialState);
 
   const defaultProps = {
     options: availableCurrencies,
-    getOptionLabel: (option: ExchangeCurrency) => option.currency,
   };
   return (
     <Box>
@@ -48,6 +70,13 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
           id="amount"
           label="Amount"
           variant="standard"
+          value={state.amount}
+          onChange={(e) =>
+            dispatch({
+              type: CurrencyConversionActionTypes.INPUT_CONVERSION_VALUES,
+              payload: { name: e.target.name, value: e.target.value },
+            })
+          }
           inputProps={{
             min: "0",
           }}
@@ -57,12 +86,22 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
           disablePortal
           id="currencies-from"
           sx={{ width: { md: "280px", xs: "100%" } }}
+          value={state.from}
+          freeSolo
+          // eslint-disable-next-line no-unused-vars
+          onChange={(e, value) => {
+            dispatch({
+              type: CurrencyConversionActionTypes.INPUT_CONVERSION_VALUES,
+              payload: { name: "from", value: value || "" },
+            });
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
               type="text"
               label="From"
               variant="standard"
+              name="from"
             />
           )}
         />
@@ -81,8 +120,23 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
           disablePortal
           id="currencies-to"
           sx={{ width: { md: "280px", xs: "100%" } }}
+          value={state.to}
+          freeSolo
+          // eslint-disable-next-line no-unused-vars
+          onChange={(e, value) => {
+            dispatch({
+              type: CurrencyConversionActionTypes.INPUT_CONVERSION_VALUES,
+              payload: { name: "to", value: value || "" },
+            });
+          }}
           renderInput={(params) => (
-            <TextField {...params} type="text" label="To" variant="standard" />
+            <TextField
+              {...params}
+              type="text"
+              label="To"
+              variant="standard"
+              name="to"
+            />
           )}
         />
 
@@ -93,11 +147,13 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
 };
 
 export async function getStaticProps() {
-  let availableCurrencies: ExchangeCurrency[] = [];
+  let availableCurrencies: string[] = [];
   try {
     const currencies = await Fetch.get("/exchange-rates");
     if (currencies.status === 200) {
-      availableCurrencies = currencies.data;
+      availableCurrencies = currencies.data.map(
+        (currency: ExchangeCurrency) => currency.currency
+      );
     }
   } catch (error) {
     //  execute error or not found policy here if any
