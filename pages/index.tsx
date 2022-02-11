@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useEffect } from "react";
-import Fetch from "../src/axios";
+import Fetch from "../src/utils/axios";
 
 const Home: NextPage = () => {
   useEffect(() => {
@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       });
   }, []);
 
-  return <div>Hello Payconiq</div>;
+  return <div>Currency Convert</div>;
 };
 
 export default Home;

@@ -6,7 +6,7 @@ const Fetch = axios.create({
   params: {
     key: "b2a68611ec36d770198bb98df78b3e52aeea4545",
   },
-  paramsSerializer: function (params) {
+  paramsSerializer: function (params: any) {
     return qs.stringify(params, { arrayFormat: "comma" });
   },
 });
