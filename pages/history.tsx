@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import {
   Paper,
   Table,
@@ -9,12 +10,12 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
+import { Box } from "@mui/system";
 import type { NextPage } from "next";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+
 import useStorage from "../src/hooks/useStorage";
-import { Box } from "@mui/system";
-import { useRouter } from "next/router";
 import { currencyStorage } from "../src/common/Types";
 
 const Home: NextPage = () => {

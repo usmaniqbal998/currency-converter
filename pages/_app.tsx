@@ -3,11 +3,11 @@ import Head from "next/head";
 import { ThemeProvider } from "@mui/material/styles";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
+import { Container } from "@mui/material";
+
 import createEmotionCache from "../src/utils/createEmotionCache";
 import Navbar from "../src/components/Navbar/index";
-
 import theme from "../src/utils/theme";
-import { Container } from "@mui/material";
 
 const clientSideEmotionCache = createEmotionCache();
 interface MyAppProps extends AppProps {

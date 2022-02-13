@@ -1,21 +1,11 @@
-import {
-  Box,
-  Paper,
-  Table,
-  TableCell,
-  TableRow,
-  TableHead,
-  TableContainer,
-  TableBody,
-} from "@mui/material";
-import { ResponsiveLine } from "@nivo/line";
+import { Box } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { HistoryData } from "../../common/Types";
-import Fetch from "../../utils/axios";
+import { useCallback, useEffect, useState } from "react";
 import ExchangeRateLine from "../exchangeRateLine";
 import ExchangeHistory from "./exchangehostory";
 import Statistics from "./statistics";
+import { HistoryData } from "../../common/Types";
+import Fetch from "../../utils/axios";
 
 interface Props {
   duration: number;
@@ -43,6 +33,25 @@ const HistoryTable: React.FunctionComponent<Props> = ({
   console.log(sum);
   const average = sum / exchangeHistory.length;
 
+  const getHistory = useCallback(
+    async (currency: string) => {
+      try {
+        const history = await Fetch("/exchange-rates/history", {
+          params: {
+            start: dayjs().subtract(duration, "days").toISOString(),
+            currency: currency,
+          },
+        });
+        if (history.status === 200) {
+          setExchangeHistory(history.data.reverse());
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [duration]
+  );
+
   useEffect(() => {
     if (currency) {
       //  because nomics free version allows one api call in 1 sec otherwise
@@ -51,23 +60,7 @@ const HistoryTable: React.FunctionComponent<Props> = ({
         getHistory(currency);
       }, 1000);
     }
-  }, [currency, duration]);
-
-  const getHistory = async (currency: string) => {
-    try {
-      const history = await Fetch("/exchange-rates/history", {
-        params: {
-          start: dayjs().subtract(duration, "days").toISOString(),
-          currency: currency,
-        },
-      });
-      if (history.status === 200) {
-        setExchangeHistory(history.data.reverse());
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  }, [currency, duration, getHistory]);
 
   return (
     <>

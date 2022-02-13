@@ -15,7 +15,6 @@ import ConversionWidget from "../src/components/ConversionWidget";
 import HistoryDuration from "../src/components/HistoryDuration";
 import HistoryTable from "../src/components/HistoryTable";
 import useStorage from "../src/hooks/useStorage";
-import ExchangeRateLine from "../src/components/exchangeRateLine";
 
 interface Props {
   availableCurrencies: string[];
