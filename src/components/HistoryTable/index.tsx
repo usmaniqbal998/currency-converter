@@ -8,9 +8,12 @@ import {
   TableContainer,
   TableBody,
 } from "@mui/material";
+import { ResponsiveLine } from "@nivo/line";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { HistoryData } from "../../common/Types";
 import Fetch from "../../utils/axios";
+import ExchangeRateLine from "../exchangeRateLine";
 
 interface Props {
   duration: number;
@@ -21,21 +24,17 @@ const HistoryTable: React.FunctionComponent<Props> = ({
   duration,
   currency,
 }: Props) => {
-  const [exchangeHistory, setExchangeHistory] = useState([]);
+  const [exchangeHistory, setExchangeHistory] = useState<HistoryData[]>([]);
 
   const max = Math.max(
-    ...exchangeHistory.map(
-      (historyData: { timestamp: string; rate: number }) => historyData.rate
-    )
+    ...exchangeHistory.map((historyData: HistoryData) => historyData.rate)
   );
   const min = Math.min(
-    ...exchangeHistory.map(
-      (historyData: { timestamp: string; rate: number }) => historyData.rate
-    )
+    ...exchangeHistory.map((historyData: HistoryData) => historyData.rate)
   );
 
   const sum = exchangeHistory.reduce(
-    (total: number, historyData: { timestamp: string; rate: number }) =>
+    (total: number, historyData: HistoryData) =>
       (total += Number(historyData.rate)),
     0
   );
@@ -69,76 +68,91 @@ const HistoryTable: React.FunctionComponent<Props> = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        justifyContent: { sm: "space-between" },
-        mt: 2,
-      }}
-    >
-      <TableContainer
-        component={Paper}
-        sx={{ width: { xs: "100%", sm: "50%" } }}
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          mt: 2,
+          height: 400,
+          width: "100%",
+        }}
       >
-        <Table aria-label="exchange-history-table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Date</TableCell>
-              <TableCell align="left">Exchange rate</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {exchangeHistory.map((historydata: any, index: number) => (
-              <TableRow key={index}>
-                <TableCell component="th" scope="row">
-                  {dayjs(historydata.timestamp).format("DD/MM/YYYY")}
-                </TableCell>
-                <TableCell align="left">
-                  {Number(historydata.rate).toFixed(3)}
-                </TableCell>
+        <ExchangeRateLine historyData={exchangeHistory} />
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: { sm: "space-between" },
+          mt: 2,
+        }}
+      >
+        <TableContainer
+          component={Paper}
+          sx={{ width: { xs: "100%", sm: "50%" } }}
+        >
+          <Table aria-label="exchange-history-table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Date</TableCell>
+                <TableCell align="left">Exchange rate</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {exchangeHistory.map(
+                (historydata: HistoryData, index: number) => (
+                  <TableRow key={index}>
+                    <TableCell component="th" scope="row">
+                      {dayjs(historydata.timestamp).format("DD/MM/YYYY")}
+                    </TableCell>
+                    <TableCell align="left">
+                      {Number(historydata.rate).toFixed(3)}
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <TableContainer
-        component={Paper}
-        sx={{ width: { xs: "100%", sm: "45%" } }}
-      >
-        <Table aria-label="exchange-history-table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Statistics</TableCell>
-              <TableCell align="left"></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell component="th" scope="row">
-                Max
-              </TableCell>
-              <TableCell align="left">{max}</TableCell>
-            </TableRow>
+        <TableContainer
+          component={Paper}
+          sx={{ width: { xs: "100%", sm: "45%" } }}
+        >
+          <Table aria-label="exchange-history-table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Statistics</TableCell>
+                <TableCell align="left"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell component="th" scope="row">
+                  Max
+                </TableCell>
+                <TableCell align="left">{max}</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell component="th" scope="row">
-                Min
-              </TableCell>
-              <TableCell align="left">{min}</TableCell>
-            </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">
+                  Min
+                </TableCell>
+                <TableCell align="left">{min}</TableCell>
+              </TableRow>
 
-            <TableRow>
-              <TableCell component="th" scope="row">
-                Average
-              </TableCell>
-              <TableCell align="left">{average}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+              <TableRow>
+                <TableCell component="th" scope="row">
+                  Average
+                </TableCell>
+                <TableCell align="left">{average}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </>
   );
 };
 

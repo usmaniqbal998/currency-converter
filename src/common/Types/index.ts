@@ -41,3 +41,8 @@ export interface currencyStorage {
   price: number;
   id: string;
 }
+
+export interface HistoryData {
+  timestamp: string;
+  rate: number;
+}
