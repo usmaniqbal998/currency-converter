@@ -54,6 +54,7 @@ const ExchangeRateLine: React.FunctionComponent<Props> = ({
           legendOffset: -60,
           legendPosition: "middle",
         }}
+        enableGridY={false}
         pointSize={10}
         pointColor={{ theme: "background" }}
         pointBorderWidth={2}

@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import { HistoryData } from "../../common/Types";
 import Fetch from "../../utils/axios";
 import ExchangeRateLine from "../exchangeRateLine";
+import ExchangeHistory from "./exchangehostory";
+import Statistics from "./statistics";
 
 interface Props {
   duration: number;
@@ -88,69 +90,9 @@ const HistoryTable: React.FunctionComponent<Props> = ({
           mt: 2,
         }}
       >
-        <TableContainer
-          component={Paper}
-          sx={{ width: { xs: "100%", sm: "50%" } }}
-        >
-          <Table aria-label="exchange-history-table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Date</TableCell>
-                <TableCell align="left">Exchange rate</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {exchangeHistory.map(
-                (historydata: HistoryData, index: number) => (
-                  <TableRow key={index}>
-                    <TableCell component="th" scope="row">
-                      {dayjs(historydata.timestamp).format("DD/MM/YYYY")}
-                    </TableCell>
-                    <TableCell align="left">
-                      {Number(historydata.rate).toFixed(3)}
-                    </TableCell>
-                  </TableRow>
-                )
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <ExchangeHistory exchangeHistory={exchangeHistory} />
 
-        <TableContainer
-          component={Paper}
-          sx={{ width: { xs: "100%", sm: "45%" } }}
-        >
-          <Table aria-label="exchange-history-table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Statistics</TableCell>
-                <TableCell align="left"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell component="th" scope="row">
-                  Max
-                </TableCell>
-                <TableCell align="left">{max}</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell component="th" scope="row">
-                  Min
-                </TableCell>
-                <TableCell align="left">{min}</TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell component="th" scope="row">
-                  Average
-                </TableCell>
-                <TableCell align="left">{average}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Statistics min={min} max={max} average={average} />
       </Box>
     </>
   );
