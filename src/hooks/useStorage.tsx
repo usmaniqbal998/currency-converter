@@ -1,18 +1,22 @@
 import React from "react";
+import { currencyStorage } from "../common/Types";
 
 const useStorage = (
   key: string,
-  defaultValue: [] | (() => void) = [],
+  defaultValue = [],
   { serialize = JSON.stringify, deserialize = JSON.parse } = {}
-) => {
-  const [state, setState] = React.useState(() => {
+): [
+  currencyStorage[],
+  React.Dispatch<React.SetStateAction<currencyStorage[]>>
+] => {
+  const [state, setState] = React.useState<currencyStorage[]>(() => {
     if (typeof window !== "undefined") {
       const valueInLocalStorage = window.localStorage.getItem(key);
       if (valueInLocalStorage) {
         return deserialize(valueInLocalStorage);
       }
     }
-    return typeof defaultValue === "function" ? defaultValue() : defaultValue;
+    return defaultValue;
   });
 
   const prevKeyRef = React.useRef(key);

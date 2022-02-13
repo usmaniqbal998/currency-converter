@@ -43,7 +43,11 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="div"
-              sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                "&:hover": { cursor: "pointer" },
+              }}
             >
               Currency Exchange
             </Typography>
@@ -80,7 +84,14 @@ const Navbar = () => {
             >
               {pages.map(({ title, address }: Pages) => (
                 <Link passHref key={address} href={address}>
-                  <Typography sx={{ p: 2 }} textAlign="center">
+                  <Typography
+                    sx={{
+                      p: 2,
+                      fontWeight: 600,
+                      "&:hover": { cursor: "pointer" },
+                    }}
+                    textAlign="center"
+                  >
                     {title}
                   </Typography>
                 </Link>
@@ -93,12 +104,19 @@ const Navbar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
           >
-            LOGO
+            Currency Exchange
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map(({ title, address }: Pages) => (
               <Link passHref key={address} href={address}>
-                <Typography sx={{ p: 2 }} textAlign="center">
+                <Typography
+                  sx={{
+                    p: 2,
+                    fontWeight: 600,
+                    "&:hover": { cursor: "pointer" },
+                  }}
+                  textAlign="center"
+                >
                   {title}
                 </Typography>
               </Link>

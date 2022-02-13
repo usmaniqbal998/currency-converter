@@ -1,20 +1,13 @@
 import React from "react";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import { Box } from "@mui/material";
 import {
   CurrencyConverionActions,
   CurrencyConversionInput,
-  CurrencyConversionActionTypes,
   currencyData,
 } from "../../common/Types";
-import ConversionForm from "./conversionForm";
+import ConversionForm from "./conversionforms";
+import ConversionResults from "./conversionresult";
+import NotFound from "./notfound";
 
 interface Props {
   availableCurrencies: string[];
@@ -61,72 +54,9 @@ const ConversionWidget: React.FunctionComponent<Props> = ({
         }}
       >
         {conversionData.isFound ? (
-          <>
-            <Box>
-              <Typography
-                component="span"
-                sx={{ fontWeight: 400, fontSize: "40px" }}
-              >
-                {conversionData.amount} {conversionData.from} =
-              </Typography>
-              <Typography
-                color="primary"
-                component="span"
-                sx={{ fontWeight: 600, fontSize: "40px" }}
-              >
-                {conversionData.amount / conversionData?.price}{" "}
-                {conversionData.to}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography
-                component="span"
-                sx={{ fontWeight: 300, fontSize: "16px" }}
-              >
-                1 {conversionData.to} ={conversionData.price}{" "}
-                {conversionData.from}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                component="span"
-                sx={{ fontWeight: 300, fontSize: "16px" }}
-              >
-                1 {conversionData.from} = {1 / conversionData?.price}{" "}
-                {conversionData.to}
-              </Typography>
-            </Box>
-          </>
+          <ConversionResults conversionData={conversionData} />
         ) : (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography
-              component="span"
-              sx={{ fontWeight: 400, fontSize: "20px" }}
-            >
-              No Data Found for {conversionData.from} to {conversionData.to} :(
-            </Typography>
-            <Typography
-              textAlign="center"
-              sx={{ fontWeight: 300, fontSize: "20px" }}
-            >
-              Dont Trust me ? Try in Browser
-            </Typography>
-            <Typography
-              textAlign="center"
-              sx={{ fontWeight: 300, fontSize: "16px" }}
-            >
-              https://api.nomics.com/v1/currencies/ticker?key=4465e0ac22021c66a32691e2e3a4641d39c557ca&ids=
-              {conversionData.to}&convert={conversionData.from}
-            </Typography>
-          </Box>
+          <NotFound conversionData={conversionData} />
         )}
       </Box>
     </Box>

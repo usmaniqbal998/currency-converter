@@ -33,3 +33,11 @@ export interface currencyData {
   price: number;
   isFound: boolean | null;
 }
+
+export interface currencyStorage {
+  to: string;
+  from: string;
+  amount: number;
+  price: number;
+  id: string;
+}
