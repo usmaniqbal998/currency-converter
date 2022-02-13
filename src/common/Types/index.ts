@@ -31,5 +31,5 @@ export interface currencyData {
   from: string;
   amount: number;
   price: number;
-  isFound: boolean;
+  isFound: boolean | null;
 }

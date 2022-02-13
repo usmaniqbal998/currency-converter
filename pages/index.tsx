@@ -12,6 +12,7 @@ import ConversionWidget from "../src/components/ConversionWidget";
 import HistoryDuration from "../src/components/HistoryDuration";
 import { Divider, Typography } from "@mui/material";
 import HistoryTable from "../src/components/HistoryTable";
+import useStorage from "../src/hooks/useStorage";
 
 interface Props {
   availableCurrencies: string[];
@@ -42,25 +43,42 @@ function getCurrency(
 }
 
 const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
-  const [toConvert, dispatch] = useReducer(getCurrency, initialState);
+  const [conversionStorage, setConversionStorage] = useStorage(
+    "conversionHistory",
+    []
+  );
+  const [toConvert, dispatch] = useReducer(
+    getCurrency,
+    initialState,
+    (initial: CurrencyConversionInput) => {
+      if (conversionStorage.length > 0) {
+        return {
+          amount: conversionStorage[0].amount,
+          to: conversionStorage[0].to,
+          from: conversionStorage[0].from,
+        };
+      }
+      return initial;
+    }
+  );
   const [conversionData, setConversionData] = useState<currencyData>({
     to: "",
     from: "",
     amount: 0,
     price: 0,
-    isFound: false,
+    isFound: null,
   });
   const [duration, setDuration] = useState(7);
 
   useEffect(() => {
-    convertCurrency();
+    convertCurrency(false);
   }, []);
 
   const onDurationChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDuration(Number(event.target.value));
   };
 
-  const convertCurrency = async () => {
+  const convertCurrency = async (storage: boolean) => {
     try {
       const convertedCurrency = await Fetch("/currencies/ticker", {
         params: {
@@ -70,22 +88,34 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
         },
       });
 
-      if (convertedCurrency.data.length === 0) {
-        setConversionData({
-          ...conversionData,
-          to: toConvert.to,
-          from: toConvert.from,
-          isFound: false,
-        });
+      if (convertedCurrency.status === 200) {
+        if (convertedCurrency.data.length === 0) {
+          setConversionData({
+            ...conversionData,
+            to: toConvert.to,
+            from: toConvert.from,
+            isFound: false,
+          });
+        } else {
+          setConversionData({
+            to: toConvert.to,
+            from: toConvert.from,
+            amount: Number(toConvert.amount),
+            price: Number(convertedCurrency.data[0].price),
+            isFound: true,
+          });
+          if (storage)
+            setConversionStorage((storageData: any) => [
+              {
+                to: toConvert.to,
+                from: toConvert.from,
+                amount: Number(toConvert.amount),
+                price: Number(convertedCurrency.data[0].price),
+              },
+              ...storageData,
+            ]);
+        }
       }
-
-      setConversionData({
-        to: toConvert.to,
-        from: toConvert.from,
-        amount: Number(toConvert.amount),
-        price: Number(convertedCurrency.data[0].price),
-        isFound: true,
-      });
     } catch (error) {
       // add error logic later
       console.log(error);
@@ -96,20 +126,26 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
     <>
       <ConversionWidget
         dispatch={dispatch}
-        convertCurrencyCallback={convertCurrency}
+        convertCurrencyCallback={() => convertCurrency(true)}
         toConvert={toConvert}
         availableCurrencies={availableCurrencies}
         conversionData={conversionData}
       />
-      <Divider sx={{ m: 4 }} />
-      <Typography variant="h5" sx={{ mb: 3 }}>
-        Exchange History
-      </Typography>
-      <HistoryDuration
-        daysHistory={duration}
-        onChangeCallback={onDurationChanged}
-      />
-      <HistoryTable duration={duration} currency={conversionData.to} />
+      {conversionData.isFound && (
+        <>
+          <Divider sx={{ m: 4 }} />
+          <Typography variant="h5">Exchange History</Typography>
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            Note: in free version nomics give exchange history only in USD
+            Conversion *
+          </Typography>
+          <HistoryDuration
+            daysHistory={duration}
+            onChangeCallback={onDurationChanged}
+          />
+          <HistoryTable duration={duration} currency={conversionData.to} />
+        </>
+      )}
     </>
   );
 };
