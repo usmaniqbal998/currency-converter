@@ -9,6 +9,9 @@ import {
 } from "../src/common/Types";
 import { useEffect, useReducer, useState } from "react";
 import ConversionWidget from "../src/components/ConversionWidget";
+import HistoryDuration from "../src/components/HistoryDuration";
+import { Divider, Typography } from "@mui/material";
+import HistoryTable from "../src/components/HistoryTable";
 
 interface Props {
   availableCurrencies: string[];
@@ -47,10 +50,15 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
     price: 0,
     isFound: false,
   });
+  const [duration, setDuration] = useState(7);
 
   useEffect(() => {
     convertCurrency();
   }, []);
+
+  const onDurationChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDuration(Number(event.target.value));
+  };
 
   const convertCurrency = async () => {
     try {
@@ -58,7 +66,6 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
         params: {
           ids: toConvert.to,
           convert: toConvert.from,
-          interval: "1h",
           status: "active",
         },
       });
@@ -81,17 +88,29 @@ const Home: NextPage<Props> = ({ availableCurrencies }: Props) => {
       });
     } catch (error) {
       // add error logic later
+      console.log(error);
     }
   };
 
   return (
-    <ConversionWidget
-      dispatch={dispatch}
-      convertCurrencyCallback={convertCurrency}
-      toConvert={toConvert}
-      availableCurrencies={availableCurrencies}
-      conversionData={conversionData}
-    />
+    <>
+      <ConversionWidget
+        dispatch={dispatch}
+        convertCurrencyCallback={convertCurrency}
+        toConvert={toConvert}
+        availableCurrencies={availableCurrencies}
+        conversionData={conversionData}
+      />
+      <Divider sx={{ m: 4 }} />
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        Exchange History
+      </Typography>
+      <HistoryDuration
+        daysHistory={duration}
+        onChangeCallback={onDurationChanged}
+      />
+      <HistoryTable duration={duration} currency={conversionData.to} />
+    </>
   );
 };
 
